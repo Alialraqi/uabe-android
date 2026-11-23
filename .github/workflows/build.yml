@@ -23,22 +23,32 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Show repo layout
+        run: |
+          pwd
+          find . -maxdepth 3 -name '*.csproj' -o -maxdepth 3 -name '*.sln*' | head -50
+
       - name: Install Android workload
         run: dotnet workload install android
 
       - name: Build APK
-        working-directory: UABEA.Android/UABEA.Android.Android
-        run: dotnet publish -c Release -f net8.0-android -p:AndroidPackageFormat=apk
+        run: |
+          PROJ=$(find . -name 'UABEA.Android.Android.csproj' | head -n 1)
+          if [ -z "$PROJ" ]; then
+            echo "ERROR: UABEA.Android.Android.csproj not found. Upload the full project folder contents."
+            exit 1
+          fi
+          echo "Building: $PROJ"
+          dotnet publish "$PROJ" -c Release -f net8.0-android -p:AndroidPackageFormat=apk
 
       - name: Pick final APK
         run: |
           mkdir -p out
-          APK=$(find UABEA.Android/UABEA.Android.Android/bin/Release -name '*-Signed.apk' | head -n 1)
-          if [ -z "$APK" ]; then APK=$(find UABEA.Android/UABEA.Android.Android/bin/Release -name '*.apk' | head -n 1); fi
+          APK=$(find . -path '*/bin/Release/*' -name '*-Signed.apk' | head -n 1)
+          if [ -z "$APK" ]; then APK=$(find . -path '*/bin/Release/*' -name '*.apk' | head -n 1); fi
           echo "Using: $APK"
           cp "$APK" out/UABEA.apk
 
-      # Published as a Release asset, so it downloads as a plain .apk (no zip to extract)
       - name: Publish Release
         uses: softprops/action-gh-release@v2
         with:
