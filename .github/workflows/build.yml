@@ -1,0 +1,47 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install Android workload
+        run: dotnet workload install android
+
+      - name: Build APK
+        working-directory: UABEA.Android/UABEA.Android.Android
+        run: dotnet publish -c Release -f net8.0-android -p:AndroidPackageFormat=apk
+
+      - name: Pick final APK
+        run: |
+          mkdir -p out
+          APK=$(find UABEA.Android/UABEA.Android.Android/bin/Release -name '*-Signed.apk' | head -n 1)
+          if [ -z "$APK" ]; then APK=$(find UABEA.Android/UABEA.Android.Android/bin/Release -name '*.apk' | head -n 1); fi
+          echo "Using: $APK"
+          cp "$APK" out/UABEA.apk
+
+      # Published as a Release asset, so it downloads as a plain .apk (no zip to extract)
+      - name: Publish Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: UABEA build ${{ github.run_number }}
+          files: out/UABEA.apk
