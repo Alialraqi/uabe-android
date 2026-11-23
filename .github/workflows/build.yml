@@ -23,10 +23,23 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Show repo layout
+      # Force SDK 8 (the runner also has SDK 11, which rejects net8.0-android as out of support)
+      - name: Pin .NET SDK 8
         run: |
-          pwd
-          find . -maxdepth 3 -name '*.csproj' -o -maxdepth 3 -name '*.sln*' | head -50
+          cat > global.json <<'JSON'
+          {
+            "sdk": { "version": "8.0.100", "rollForward": "latestFeature" }
+          }
+          JSON
+          dotnet --version
+
+      # Avalonia.Android 11.0.1 needs Android platform version 31 or higher
+      - name: Patch target framework
+        run: |
+          PROJ=$(find . -name 'UABEA.Android.Android.csproj' | head -n 1)
+          if [ -z "$PROJ" ]; then echo "ERROR: csproj not found"; exit 1; fi
+          sed -i 's|<TargetFramework>net8.0-android[0-9.]*</TargetFramework>|<TargetFramework>net8.0-android34.0</TargetFramework>|' "$PROJ"
+          grep TargetFramework "$PROJ"
 
       - name: Install Android workload
         run: dotnet workload install android
@@ -34,12 +47,11 @@ jobs:
       - name: Build APK
         run: |
           PROJ=$(find . -name 'UABEA.Android.Android.csproj' | head -n 1)
-          if [ -z "$PROJ" ]; then
-            echo "ERROR: UABEA.Android.Android.csproj not found. Upload the full project folder contents."
-            exit 1
-          fi
-          echo "Building: $PROJ"
-          dotnet publish "$PROJ" -c Release -f net8.0-android -p:AndroidPackageFormat=apk
+          dotnet publish "$PROJ" -c Release -f net8.0-android34.0 \
+            -p:AndroidPackageFormat=apk \
+            -p:AcceptAndroidSDKLicenses=True \
+            -p:InstallAndroidDependencies=True \
+            -p:NuGetAudit=false
 
       - name: Pick final APK
         run: |
