@@ -1,0 +1,24 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:UABEAvalonia.ViewModels.Tools"
+             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
+             x:Class="UABEAvalonia.Views.Tools.WorkspaceExplorerToolView"
+             x:DataType="vm:WorkspaceExplorerToolViewModel">
+    <!--
+      Workspace Explorer Tool window view. TreeView bound to RootItems,
+      the selected item is automatically bound back to WorkspaceExplorerToolViewModel.SelectedItem (two-way),
+      ViewModel and the main view model is notified through SelectedWorkspaceItemChangedMessage to open the document.
+      Note: the SelectedItem type is WorkspaceItem (located in UABEA.Core),
+      but the TreeView binds through reflection, so its type does not need to be declared explicitly in XAML.
+    -->
+    <TreeView ItemsSource="{Binding RootItems}"
+              SelectedItem="{Binding SelectedItem}">
+        <TreeView.ItemTemplate>
+            <TreeDataTemplate ItemsSource="{Binding Children}">
+                <TextBlock Text="{Binding Name}" />
+            </TreeDataTemplate>
+        </TreeView.ItemTemplate>
+    </TreeView>
+</UserControl>

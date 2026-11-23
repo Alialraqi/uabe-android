@@ -1,0 +1,55 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:UABEAvalonia.ViewModels.Tools"
+             xmlns:views="clr-namespace:UABEAvalonia.Views.Tools"
+             xmlns:mesh="clr-namespace:UABEAvalonia.Controls.MeshPreviewer"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
+             x:Class="UABEAvalonia.Views.Tools.PreviewerToolView"
+             x:DataType="vm:PreviewerToolViewModel"
+             Background="{DynamicResource DockThemeListBackgroundBrush}">
+    <!--
+      Unified Previewer panel view. Switches display according to PreviewType:
+        - Text  : Read-only TextBox shows PreviewText
+        - Image : embeds ImagePreviewView
+        - Mesh  : embeds MeshPreviewerControl (OpenGL rendering)
+        - None  : shows hint text
+      bound through IsVisible to IsTextPreview / IsImagePreview / IsMeshPreview / IsNonePreview switching.
+    -->
+    <Grid>
+        <!-- Text preview -->
+        <TextBox IsVisible="{Binding IsTextPreview}"
+                 Text="{Binding PreviewText}"
+                 IsReadOnly="True"
+                 AcceptsReturn="True"
+                 TextWrapping="NoWrap"
+                 FontFamily="Consolas,Menlo,Monospace"
+                 BorderThickness="0"
+                 Padding="4"
+                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto" />
+
+        <!-- Image preview -->
+        <views:ImagePreviewView IsVisible="{Binding IsImagePreview}" />
+
+        <!-- Mesh 3D preview: OpenGL control, ActiveMesh bound to ViewModel -->
+        <mesh:MeshPreviewerControl IsVisible="{Binding IsMeshPreview}"
+                                   ActiveMesh="{Binding ActiveMesh}" />
+
+        <!-- No preview hint -->
+        <StackPanel IsVisible="{Binding IsNonePreview}"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Spacing="6">
+            <TextBlock Text="Previewer"
+                       FontSize="14"
+                       Opacity="0.5"
+                       HorizontalAlignment="Center" />
+            <TextBlock Text="After selecting an asset, the preview is shown here"
+                       FontSize="11"
+                       Opacity="0.4"
+                       HorizontalAlignment="Center" />
+        </StackPanel>
+    </Grid>
+</UserControl>

@@ -1,0 +1,44 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:UABEAvalonia.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="UABEAvalonia.Views.MainView"
+             x:DataType="vm:MainViewModel">
+    <!--
+      Dock Main view. Structure follows UABEANext4 MainView:
+        Menu Top menu → DockControl Main area → Bottom status bar
+      DockControl From Dock.Avalonia 11.0.0.7 (usable with the default xmlns, no prefix needed).
+      dockable ViewModel rendering is done by the ViewLocator registered in App.axaml,
+      convention XxxViewModel -> XxxView (located in Views/{Documents,Tools} under).
+    -->
+    <Grid RowDefinitions="Auto,*,22" Margin="4">
+        <!-- Top menu -->
+        <Menu Grid.Row="0" Padding="0,6">
+            <MenuItem Header="File">
+                <MenuItem Header="Open" Command="{Binding FileOpenCommand}"
+                          HotKey="Ctrl+O" InputGesture="Ctrl+O" />
+                <MenuItem Header="Close All" Command="{Binding FileCloseAllCommand}"
+                          HotKey="Ctrl+Shift+W" InputGesture="Ctrl+Shift+W"
+                          IsEnabled="{Binding Workspace.RootItems.Count}" />
+                <MenuItem Header="Settings" Command="{Binding FileSettingsCommand}" />
+                <MenuItem Header="Exit" Command="{Binding FileExitCommand}"
+                          HotKey="Ctrl+Q" InputGesture="Ctrl+Q" />
+            </MenuItem>
+        </Menu>
+
+        <!-- Dock Main area; the concrete dockable rendering is left to ViewLocator + each XxxView -->
+        <DockControl Layout="{Binding Layout}" Margin="4" Grid.Row="1" />
+
+        <!-- Bottom status bar (placeholder, Workspace.ProgressValue will be connected in a later stage) -->
+        <Grid Grid.Row="2" Margin="4,0,0,4">
+            <StackPanel Orientation="Horizontal" Spacing="6">
+                <TextBlock Text="{Binding Workspace.RootItems.Count}"
+                           VerticalAlignment="Center" Opacity="0.7" />
+                <TextBlock Text="file(s) loaded"
+                           VerticalAlignment="Center" Opacity="0.7" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

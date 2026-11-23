@@ -1,0 +1,27 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:v="clr-namespace:UABEAvalonia.Views"
+        xmlns:vm="clr-namespace:UABEAvalonia.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
+        x:Class="UABEAvalonia.DockMainWindow"
+        x:DataType="vm:MainViewModel"
+        Icon="/Assets/uabeavalonia16.ico"
+        Title="{Binding WindowTitle}"
+        WindowStartupLocation="CenterScreen">
+    <!--
+      Dock Main window: contains MainView (menu + DockControl + status bar).
+      Coexists with the existing MainWindow.axaml as an optional entry:
+        - MainWindow.axaml: Old single-bundle editor (kept as is)
+        - DockMainWindow.axaml: New Dock multi-document UI (introduced in P1)
+      Switched through configuration in App.axaml.cs.
+    -->
+    <Design.DataContext>
+        <vm:MainViewModel />
+    </Design.DataContext>
+
+    <Panel>
+        <v:MainView />
+    </Panel>
+</Window>

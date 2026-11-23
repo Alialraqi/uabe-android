@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64;x86</Platforms>
+    <!-- Loaded when running as a plugin; marked as dynamically loadable -->
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+  </PropertyGroup>
+
+  <!-- UABEA.Core Core library: provides IUavPluginPreviewer, Workspace, AssetContainer,MeshObj -->
+  <ItemGroup>
+    <ProjectReference Include="..\UABEA.Core\UABEA.Core.csproj">
+      <!-- The host has already loaded UABEA.Core; the plugin does not need to copy it to the output directory -->
+      <Private>false</Private>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </ProjectReference>
+  </ItemGroup>
+
+ <!-- AssetsTools.NET DLL (AssetsTools.NET and the AssetsTools.NET.Extra namespaces are all in this assembly) -->
+  <ItemGroup>
+    <Reference Include="AssetsTools.NET">
+      <HintPath>..\Libs\AssetsTools.NET.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- After build, copy the plugin DLL to the host plugins directory (same as TexturePlugin) -->
+  <Target Name="CopyLibrariesBuild" AfterTargets="AfterBuild" Condition="'$(SolutionDir)' != '*Undefined*'">
+    <PropertyGroup>
+      <UABEABinDir>$(SolutionDir)UABEAvalonia\$(OutputPath)</UABEABinDir>
+    </PropertyGroup>
+    <Copy SourceFiles="$(OutputPath)MeshPlugin.dll" DestinationFolder="$(UABEABinDir)plugins" ContinueOnError="true" />
+  </Target>
+
+  <Target Name="CopyLibrariesPublish" AfterTargets="Publish" Condition="'$(SolutionDir)' != '*Undefined*'">
+    <PropertyGroup>
+      <UABEABinDir>$(SolutionDir)UABEAvalonia\$(PublishDir)</UABEABinDir>
+    </PropertyGroup>
+    <Copy SourceFiles="$(OutputPath)MeshPlugin.dll" DestinationFolder="$(UABEABinDir)plugins" ContinueOnError="true" />
+  </Target>
+
+</Project>

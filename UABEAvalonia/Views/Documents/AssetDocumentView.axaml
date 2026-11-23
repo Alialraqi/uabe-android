@@ -1,0 +1,22 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:UABEAvalonia.ViewModels.Documents"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="UABEAvalonia.Views.Documents.AssetDocumentView"
+             x:DataType="vm:AssetDocumentViewModel">
+    <!--
+      Asset document view (P1 placeholder). Currently only shows the workspace item name;
+      a later stage will connect a DataGrid showing the AssetContainer list of that WorkspaceItem.
+    -->
+    <Border Padding="12">
+        <StackPanel Spacing="6">
+            <TextBlock Text="Asset Document"
+                       FontSize="18" FontWeight="Bold" />
+            <TextBlock Text="{Binding WorkspaceItem.Name}" />
+            <TextBlock Text="Asset list rendering will be added in a later phase."
+                       Opacity="0.6" FontStyle="Italic" />
+        </StackPanel>
+    </Border>
+</UserControl>

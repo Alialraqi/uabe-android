@@ -1,0 +1,43 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:sys="clr-namespace:System;assembly=netstandard"
+             xmlns:uabea="clr-namespace:UABEAvalonia"
+             x:Class="UABEAvalonia.App">
+  <Application.Resources>
+    <!--
+      P3-A Theme resources: let Avalonia automatically pick via ThemeDictionaries when RequestedThemeVariant
+      changes Light/Dark dictionary, all {DynamicResource XxxBrush} References
+      refresh with the theme without C# intervention. Default falls back to Light.
+    -->
+    <ResourceDictionary>
+      <ResourceDictionary.ThemeDictionaries>
+        <ResourceInclude Source="/Themes/Accents/SimpleLight.axaml" x:Key="Light" />
+        <ResourceInclude Source="/Themes/Accents/SimpleDark.axaml" x:Key="Dark" />
+        <ResourceInclude Source="/Themes/Accents/SimpleLight.axaml" x:Key="Default" />
+      </ResourceDictionary.ThemeDictionaries>
+    </ResourceDictionary>
+  </Application.Resources>
+
+  <Application.Styles>
+	  <SimpleTheme/>
+	  <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Simple.xaml"/>
+    <StyleInclude Source="avares://AvaloniaEdit/Themes/Simple/AvaloniaEdit.xaml" />
+    <StyleInclude Source="/Styles/ExtendedControlStyles.axaml"/>
+    <StyleInclude Source="/Styles/ImprovedTabStyles.axaml"/>
+    <StyleInclude Source="/Styles/ImprovedHeaderedContentControlStyles.axaml"/>
+    <Style>
+      <Style.Resources>
+        <!-- thicker scrollbar -->
+        <sys:Double x:Key="ScrollBarThumbThickness">14</sys:Double>
+      </Style.Resources>
+    </Style>
+  </Application.Styles>
+  <!--
+    P1 Docking: Register ViewLocator as a global DataTemplate,
+    DockControl ContentPresenter uses it to render dockable ViewModels into the corresponding View.
+    Matching rules: ViewModelBase subclasses or Dock.Model.Core.IDockable implementations.
+  -->
+  <Application.DataTemplates>
+    <uabea:ViewLocator />
+  </Application.DataTemplates>
+</Application>
